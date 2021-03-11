@@ -6,32 +6,44 @@ def select_albums_to_backup(albums):
     print(f"founded photos:\n")
 
     counter = 1
-    backup_choice = {}
+    data_for_backup = {}
     ids = []
 
     for status, items in albums.items():
         if status == 'service':
             for item in items['items']:
                 print(f"{counter}. {item['title']:.<24} {item['size']}")
-                backup_choice[counter] = [{'album_id': item['id'], 'album_title': item['title']}]
+                data_for_backup[counter] = [{
+                    'album_id': item['id'],
+                    'album_title': item['title'],
+                    'album_size': item['size'],
+                }]
                 counter += 1
 
         elif status == 'user albums':
             for item in items['items']:
                 if item['id'] not in [-6, -7, -15, -9000]:
-                    ids.append({'album_id': item['id'], 'album_title': item['title']})
+                    ids.append({
+                        'album_id': item['id'],
+                        'album_title': item['title'],
+                        'album_size': item['size'],
+                    })
             print(f"{counter}. {status:.<24} {items['size']}")
-            backup_choice[counter] = ids
+            data_for_backup[counter] = ids
             counter += 1
             ids = []
 
         else:
             for item in items['items']:
-                ids.append({'album_id': item['id'], 'album_title': item['title']})
+                ids.append({
+                    'album_id': item['id'],
+                    'album_title': item['title'],
+                    'album_size': items['size'],
+                })
             print(f"{counter}. {status:.<24} {items['size']}")
-            backup_choice[counter] = ids
+            data_for_backup[counter] = ids
             counter += 1
             ids = []
 
-    back_up = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
-    return backup_choice[back_up]
+    select = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
+    return data_for_backup[select]

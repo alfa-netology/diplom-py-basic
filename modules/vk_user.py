@@ -47,29 +47,33 @@ class VkUser:
             return result
 
     def backup(self, albums_to_backup, quantity=5):
-
         photos = {}
-        print()
-        for item in tqdm(albums_to_backup, colour='#188FA7', ncols=100, desc=f"receive data for backup"):
-            photos.update(self._get_photos(item['album_id'], item['album_title']))
-        
-        with open('text.json', 'w') as f:
-            f.write(json.dumps(photos, indent=4))
+        album_size = albums_to_backup[0]['album_size']
 
+        # маловероятный случай, но подстрахуемся
         try:
             int(quantity)
-            if 0 < quantity <= len(photos):
-                photos = dict(itertools.islice(photos.items(), quantity))
-            elif quantity != 0:
-                message = f"user have only {len(photos)} photos, required {quantity}"
-                print(f"{COLORS.FAILURE} {message}")
-                logger.error(message)
-                exit()
         except ValueError:
             message = f"'{quantity}' invalid attribute for backup() function"
             print(f"{COLORS.FAILURE} {message}")
             logger.error(message)
             exit()
+
+        if quantity > album_size:
+            message = f"user have only {album_size} photos, required {quantity}"
+            print(f"{COLORS.FAILURE} {message}")
+            logger.error(message)
+            exit()
+
+        # total backup берем все файлы
+        elif quantity == 0:
+            for item in tqdm(albums_to_backup, colour='#188FA7', ncols=100, desc=f"receive data for backup"):
+                photos.update(self._get_all_photos(item['album_id'], item['album_title']))
+        else:
+
+        
+        with open('text.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(photos, indent=4, ensure_ascii=False))
 
     def _get_photos(self, album_id, album_title, offset=0, result=None):
         """
@@ -117,7 +121,6 @@ class VkUser:
         if offset < total_album_photos:
             self._get_photos(album_id, album_title, offset=offset, result=result)
         return result
-
 
     def _get_albums(self):
         """
