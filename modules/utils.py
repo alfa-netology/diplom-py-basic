@@ -3,7 +3,7 @@ def select_albums_to_backup(albums):
     формирует меню для выбора альбомов для сохранения
     возвращает словарь с индетификаторами и названиями альбомов для сохранения
     """
-    print(f"founded users photos in albums:\n")
+    print(f"founded photos:\n")
 
     counter = 1
     backup_choice = {}
@@ -33,5 +33,5 @@ def select_albums_to_backup(albums):
             counter += 1
             ids = []
 
-    back_up = (int(input(f"\nwhich albums to backup, choice [1-{counter - 1}]: ")))
+    back_up = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
     return backup_choice[back_up]
