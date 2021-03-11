@@ -16,14 +16,12 @@ print("VK-Photos-Backup <version 0.1>\n\n"
       "To make a backup copy photos from the vk.com account, \n"
       "enter user id or screen name (account must exist and be open).\n")
 
-# while True:
-#     user = input("user id: ")
-#     if user == '':
-#         print(f"\n{COLORS.FAILURE} value should not be empty. let's try again")
-#     else:
-#         break
-
-user = 'alex_uglin'
+while True:
+    user = input("user id: ")
+    if user == '':
+        print(f"\n{COLORS.FAILURE} value should not be empty. let's try again")
+    else:
+        break
 
 vk_client = VkUser(vk_access_token, vk_api_version, user)
 
