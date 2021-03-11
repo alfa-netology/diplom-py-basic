@@ -40,6 +40,16 @@ class VkUser:
             return result
 
     def _get_albums(self):
+        """
+        получает список всех непустых альбомов пользователя.
+        альбомы Фотографии со страницы, Фотографии на стене, Сохраненные фотографии и Фотографии со мной,
+        переименовываются, в соотвествии со словарем 'replace_title'.
+        эти имена будут использованы при сохранении каждого альбома в свою папку.
+        вовзращает словарь albums, который в дальнейшем будет использован для выбора альбомов для сохранения
+        all photos - все доступные фотографии,
+        user albums - все альбомы пользователя,
+        service - каждый сервисный альбом можно будет сохранить по отдельности
+        """
         params = {'owner_id': self.id, 'need_system': 1}
         response = self._execute_requests('photos.getAlbums', params)
         albums = {}
@@ -48,8 +58,8 @@ class VkUser:
         owner_total_size = 0
         service_items = []
         service_total_size = 0
-        backup_number = 1
 
+        # названия для переименовывания сервисных альбомов
         replace_title = {
             -6: 'profile photos',
             -7: 'photos from wall',
@@ -69,6 +79,7 @@ class VkUser:
                     }
 
                 if album_id in [-6, -7, -15, -9000]:
+                    # переименовываю серивисные альбомы
                     item = {**item, 'title': replace_title[album_id]}
                     service_items.append(item)
                     service_total_size += album_size
@@ -83,7 +94,6 @@ class VkUser:
                     'size': service_total_size + owner_total_size
                 }})
 
-
             if len(owner_items) > 0:
                 albums.update({
                     'user albums': {
@@ -91,15 +101,12 @@ class VkUser:
                         'size': owner_total_size,
                     }})
 
-
             if len(service_items) > 0:
                 albums.update({
                     'service': {
                         'items': service_items,
                         'size': service_total_size
                         }})
-
-
 
         return albums
 
