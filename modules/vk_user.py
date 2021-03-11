@@ -61,33 +61,23 @@ class VkUser:
         # для подсчета общего числа фото в сервисных альбомах
         service_total_size = 0
 
-        # названия для переименовывания сервисных альбомов
-        replace_title = {
-            -6: 'profile photos',
-            -7: 'photos from wall',
-            -15: 'saved photos',
-            -9000: 'tagged photos'
-        }
-
         for item in response['response']['items']:
             album_id = item['id']
-            album_title = item['title']
+            album_title = self._replace_album_title(album_id, item['title'])
             album_size = item["size"]
 
             if album_size > 0:
-                item = {
+                album = {
                         'id': album_id,
                         'size': album_size,
+                        'title': album_title,
                     }
 
                 if album_id in [-6, -7, -15, -9000]:
-                    # переименовываю сервисные альбомы
-                    item = {**item, 'title': replace_title[album_id]}
-                    service_items.append(item)
+                    service_items.append(album)
                     service_total_size += album_size
                 else:
-                    item = {**item, 'title': album_title}
-                    owner_items.append(item)
+                    owner_items.append(album)
                     owner_total_size += album_size
 
             albums.update({
@@ -111,6 +101,21 @@ class VkUser:
                         }})
 
         return albums
+
+    @staticmethod
+    def _replace_album_title(album_id, album_title):
+        # переименовывает сервисные альбомы
+        replace_title = {
+            -6: 'profile photos',
+            -7: 'photos from wall',
+            -15: 'saved photos',
+            -9000: 'tagged photos'
+        }
+
+        if album_id in [-6, -7, -15, -9000]:
+            return replace_title[album_id]
+        else:
+            return album_title
 
     def _execute_requests(self, api_method, add_params, request_method='get'):
         """ выполнение запроса к vk-api с заданными параметрами """
