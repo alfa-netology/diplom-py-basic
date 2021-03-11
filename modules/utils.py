@@ -13,13 +13,13 @@ def select_albums_to_backup(albums):
         if status == 'service':
             for item in items['items']:
                 print(f"{counter}. {item['title']:.<24} {item['size']}")
-                backup_choice[counter] = [{'id': item['id'], 'album_title': item['title']}]
+                backup_choice[counter] = [{'album_id': item['id'], 'album_title': item['title']}]
                 counter += 1
 
         elif status == 'user albums':
             for item in items['items']:
                 if item['id'] not in [-6, -7, -15, -9000]:
-                    ids.append({'id': item['id'], 'album_title': item['title']})
+                    ids.append({'album_id': item['id'], 'album_title': item['title']})
             print(f"{counter}. {status:.<24} {items['size']}")
             backup_choice[counter] = ids
             counter += 1
@@ -27,7 +27,7 @@ def select_albums_to_backup(albums):
 
         else:
             for item in items['items']:
-                ids.append({'id': item['id'], 'album_title': item['title']})
+                ids.append({'album_id': item['id'], 'album_title': item['title']})
             print(f"{counter}. {status:.<24} {items['size']}")
             backup_choice[counter] = ids
             counter += 1
