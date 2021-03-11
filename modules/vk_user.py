@@ -76,11 +76,6 @@ class VkUser:
 
         logger.info('Select photo to backup')
 
-        # временно для отладки
-        saved_files_path = os.path.join(os.getcwd(), 'output', 'check_bug.json')
-        with open(saved_files_path, 'w', encoding='utf-8') as f:
-            f.write(json.dumps(photos, indent=4, ensure_ascii=False))
-
     def _get_photos(self, album_id, album_title, count=1000, offset=0, result=None):
         """
         получает все фотографии из альбома album_id в максимальном разрешении,
