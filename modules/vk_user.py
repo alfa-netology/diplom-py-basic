@@ -4,6 +4,7 @@ from datetime import datetime
 from tqdm import tqdm
 import json
 import os
+import itertools
 
 import modules.colors as COLORS
 from modules.logger import set_logger
@@ -65,25 +66,15 @@ class VkUser:
             logger.error(message)
             exit()
 
-        elif quantity == 0:
-            # total backup берем все фото
-            for item in tqdm(albums_to_backup, colour='#188FA7', ncols=100, desc=f"receive data for backup"):
-                photos.update(self._get_photos(item['album_id'], item['album_title']))
-        else:
-            # выполняю условие задания, сохраняю указанное количество фото, по умолчанию 5
-            album_id = albums_to_backup[0]['album_id']
-            album_title = albums_to_backup[0]['album_title']
-            for quantity in tqdm(range(1, quantity + 1), colour='#188FA7', ncols=100, desc=f"receive data for backup"):
-                # здесь баг если альбомов для сохранения больше одного и впервом альбоме фоток меньше,
-                # чем quantity, то сохраняются только те фото что есть, например 1, без ошибки,
-                # если в первом альбоме фоток больше чем quantity, то все ок.
-                # если брать не первый альбом, а все, тогда сохранятся первые quantity из каждого альбома.
-                # проявляется при сохрании фотографий более, чем с одного альбома (all photo или user albums).
-                # можно конечно вначале получить все фото из сохраняемых альбомов
-                # и потом отобрать нужное количество, но это трата ресурсов.
-                # место в котором моё желание написать универсальный скрипт входит в глубокое противоречие с
-                # с заданными условиями. я в тупике. как быть?
-                photos.update(self._get_photos(album_id, album_title, count=quantity))
+        for item in tqdm(albums_to_backup, colour='#188FA7', ncols=100, desc=f"receive data for backup"):
+            photos.update(self._get_photos(item['album_id'], item['album_title']))
+
+        if quantity != 0:
+            # выполняю условие задачи, выбрать заданое количество фото, по умолчанию пять
+            # по сути костыль, но задание надо выполнять.
+            photos = dict(itertools.islice(photos.items(), quantity))
+
+        logger.info('Select photo to backup')
 
         # временно для отладки
         saved_files_path = os.path.join(os.getcwd(), 'output', 'check_bug.json')
