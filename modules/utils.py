@@ -1,49 +1,53 @@
+from pprint import pprint
+
 def select_albums_to_backup(albums):
     """
     формирует меню для выбора альбомов для сохранения
-    возвращает словарь с индетификаторами и названиями альбомов для сохранения
+    возвращает словарь с индетификаторами, названиями и общим размером альбомов для сохранения
     """
     print(f"founded photos:\n")
 
     counter = 1
     data_for_backup = {}
-    ids = []
+    items = []
 
-    for status, items in albums.items():
+    for status, albums in albums.items():
         if status == 'service':
-            for item in items['items']:
-                print(f"{counter}. {item['title']:.<24} {item['size']}")
+            for album in albums['items']:
+                print(f"{counter}. {album['title']:.<24} {album['size']}")
                 data_for_backup[counter] = [{
-                    'album_id': item['id'],
-                    'album_title': item['title'],
-                    'album_size': item['size'],
+                    'album_id': album['id'],
+                    'album_title': album['title'],
+                    'album_size': album['size'],
                 }]
                 counter += 1
 
         elif status == 'user albums':
-            for item in items['items']:
-                if item['id'] not in [-6, -7, -15, -9000]:
-                    ids.append({
-                        'album_id': item['id'],
-                        'album_title': item['title'],
-                        'album_size': item['size'],
+            for album in albums['items']:
+                if album['id'] not in [-6, -7, -15, -9000]:
+                    items.append({
+                        'album_id': album['id'],
+                        'album_title': album['title'],
+                        'album_size': albums['total_size'],
                     })
-            print(f"{counter}. {status:.<24} {items['size']}")
-            data_for_backup[counter] = ids
+            print(f"{counter}. {status:.<24} {albums['total_size']}")
+            data_for_backup[counter] = items
             counter += 1
-            ids = []
+            items = []
 
         else:
-            for item in items['items']:
-                ids.append({
-                    'album_id': item['id'],
-                    'album_title': item['title'],
-                    'album_size': items['size'],
+            for album in albums['items']:
+                items.append({
+                    'album_id': album['id'],
+                    'album_title': album['title'],
+                    'album_size': albums['total_size'],
                 })
-            print(f"{counter}. {status:.<24} {items['size']}")
-            data_for_backup[counter] = ids
+            print(f"{counter}. {status:.<24} {albums['total_size']}")
+            data_for_backup[counter] = items
             counter += 1
-            ids = []
+            items = []
+
+    # pprint(data_for_backup)
 
     select = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
     return data_for_backup[select]

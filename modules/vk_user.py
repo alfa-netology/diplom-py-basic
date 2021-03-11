@@ -1,9 +1,9 @@
 import requests
-import itertools
 from time import sleep
 from datetime import datetime
 from tqdm import tqdm
 import json
+import os
 
 import modules.colors as COLORS
 from modules.logger import set_logger
@@ -65,17 +65,32 @@ class VkUser:
             logger.error(message)
             exit()
 
-        # total backup берем все файлы
         elif quantity == 0:
+            # total backup берем все фото
             for item in tqdm(albums_to_backup, colour='#188FA7', ncols=100, desc=f"receive data for backup"):
-                photos.update(self._get_all_photos(item['album_id'], item['album_title']))
+                photos.update(self._get_photos(item['album_id'], item['album_title']))
         else:
+            # выполняю условие задания, сохраняю указанное количество фото, по умолчанию 5
+            album_id = albums_to_backup[0]['album_id']
+            album_title = albums_to_backup[0]['album_title']
+            for quantity in tqdm(range(1, quantity + 1), colour='#188FA7', ncols=100, desc=f"receive data for backup"):
+                # здесь баг если альбомов для сохранения больше одного и впервом альбоме фоток меньше,
+                # чем quantity, то сохраняются только те фото что есть, например 1, без ошибки,
+                # если в первом альбоме фоток больше чем quantity, то все ок.
+                # если брать не первый альбом, а все, тогда сохранятся первые quantity из каждого альбома.
+                # проявляется при сохрании фотографий более, чем с одного альбома (all photo или user albums).
+                # можно конечно вначале получить все фото из сохраняемых альбомов
+                # и потом отобрать нужное количество, но это трата ресурсов.
+                # место в котором моё желание написать универсальный скрипт входит в глубокое противоречие с
+                # с заданными условиями. я в тупике. как быть?
+                photos.update(self._get_photos(album_id, album_title, count=quantity))
 
-        
-        with open('text.json', 'w', encoding='utf-8') as f:
+        # временно для отладки
+        saved_files_path = os.path.join(os.getcwd(), 'output', 'check_bug.json')
+        with open(saved_files_path, 'w', encoding='utf-8') as f:
             f.write(json.dumps(photos, indent=4, ensure_ascii=False))
 
-    def _get_photos(self, album_id, album_title, offset=0, result=None):
+    def _get_photos(self, album_id, album_title, count=1000, offset=0, result=None):
         """
         получает все фотографии из альбома album_id в максимальном разрешении,
         возвращает словарь photos[photo_id] = { album_title, название альбома
@@ -88,7 +103,7 @@ class VkUser:
             'user_id': self.id,
             'extended': 1,
             'offset': offset,
-            'count': 1000,
+            'count': count,
         }
 
         if album_id == -9000:
@@ -116,11 +131,14 @@ class VkUser:
                 'url': item['sizes'][-1]['url'],
             }
 
-        offset += 1000
+        if count < 1000:
+            return result
+        else:
+            offset += 1000
 
-        if offset < total_album_photos:
-            self._get_photos(album_id, album_title, offset=offset, result=result)
-        return result
+            if offset < total_album_photos:
+                self._get_photos(album_id, album_title, count=count, offset=offset, result=result)
+            return result
 
     def _get_albums(self):
         """
@@ -157,32 +175,31 @@ class VkUser:
                     }
 
                 if album_id in [-6, -7, -15, -9000]:
-                    service_items.append(album)
                     service_total_size += album_size
+                    service_items.append(album)
                 else:
-                    owner_items.append(album)
                     owner_total_size += album_size
+                    owner_items.append(album)
 
             albums.update({
                 'all photos': {
                     'items': service_items + owner_items,
-                    'size': service_total_size + owner_total_size
+                    'total_size': service_total_size + owner_total_size
                 }})
 
             if len(owner_items) > 0:
                 albums.update({
                     'user albums': {
                         'items': owner_items,
-                        'size': owner_total_size,
+                        'total_size': owner_total_size,
                     }})
 
             if len(service_items) > 0:
                 albums.update({
                     'service': {
                         'items': service_items,
-                        'size': service_total_size
+                        'total_size': service_total_size
                         }})
-
         return albums
 
     @staticmethod
