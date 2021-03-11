@@ -1,5 +1,4 @@
 import requests
-
 from modules.logger import set_logger
 
 logger = set_logger(__name__)
@@ -12,6 +11,7 @@ class VkUser:
         self.id_status = False
 
         self.id = self._check_id(user_id)
+        self.albums = self._get_albums()
 
     def _check_id(self, user_id):
         """
@@ -39,6 +39,70 @@ class VkUser:
             logger.info(f"Create instance VkUser for '{user_id}' id #{result}")
             return result
 
+    def _get_albums(self):
+        params = {'owner_id': self.id, 'need_system': 1}
+        response = self._execute_requests('photos.getAlbums', params)
+        albums = {}
+
+        owner_items = []
+        owner_total_size = 0
+        service_items = []
+        service_total_size = 0
+        backup_number = 1
+
+        replace_title = {
+            -6: 'profile photos',
+            -7: 'photos from wall',
+            -15: 'saved photos',
+            -9000: 'tagged photos'
+        }
+
+        for item in response['response']['items']:
+            album_id = item['id']
+            album_title = item['title']
+            album_size = item["size"]
+
+            if album_size > 0:
+                item = {
+                        'id': album_id,
+                        'size': album_size,
+                    }
+
+                if album_id in [-6, -7, -15, -9000]:
+                    item = {**item, 'title': replace_title[album_id]}
+                    service_items.append(item)
+                    service_total_size += album_size
+                else:
+                    item = {**item, 'title': album_title}
+                    owner_items.append(item)
+                    owner_total_size += album_size
+
+            albums.update({
+                'all photos': {
+                    'items': service_items + owner_items,
+                    'size': service_total_size + owner_total_size
+                }})
+
+
+            if len(owner_items) > 0:
+                albums.update({
+                    'user albums': {
+                        'items': owner_items,
+                        'size': owner_total_size,
+                    }})
+
+
+            if len(service_items) > 0:
+                albums.update({
+                    'service': {
+                        'items': service_items,
+                        'size': service_total_size
+                        }})
+
+
+
+        return albums
+
     def _execute_requests(self, api_method, add_params, request_method='get'):
         """ выполнение запроса к vk-api с заданными параметрами """
         request_url = f'https://api.vk.com/method/{api_method}'
@@ -55,3 +119,4 @@ class VkUser:
             result = requests.put(request_url, params).json()
 
         return result
+

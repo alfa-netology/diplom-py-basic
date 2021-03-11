@@ -1,4 +1,5 @@
 .tokens
 .idea
 .temp
+logs
 __pycache__
