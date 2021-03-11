@@ -1,4 +1,8 @@
 def select_albums_to_backup(albums):
+    """
+    формирует меню для выбора альбомов для сохранения
+    возвращает словарь с индетификаторами и названиями альбомов для сохранения
+    """
     print(f"founded users photos in albums:\n")
 
     counter = 1

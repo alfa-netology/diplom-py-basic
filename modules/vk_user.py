@@ -55,8 +55,10 @@ class VkUser:
         albums = {}
 
         owner_items = []
+        # для подсчета общего числа фото в альбомах пользователя
         owner_total_size = 0
         service_items = []
+        # для подсчета общего числа фото в сервисных альбомах
         service_total_size = 0
 
         # названия для переименовывания сервисных альбомов
@@ -79,7 +81,7 @@ class VkUser:
                     }
 
                 if album_id in [-6, -7, -15, -9000]:
-                    # переименовываю серивисные альбомы
+                    # переименовываю сервисные альбомы
                     item = {**item, 'title': replace_title[album_id]}
                     service_items.append(item)
                     service_total_size += album_size
