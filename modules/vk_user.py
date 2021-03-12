@@ -98,6 +98,53 @@ class VkUser:
             logger.error(message)
             exit()
 
+    def _get_photos(self, album_id, album_title, offset=0, result=None):
+        """
+        получает все фотографии из альбома album_id в максимальном разрешении,
+        возвращает словарь photos[photo_id] = { album_title, название альбома
+                                                date: дата загрузки с точностью до милисекунд,
+                                                likes: количество лайков,
+                                                size: размер фото в специальном формате vk_api,
+                                                url: ссылка на фото }
+        """
+        params = {
+            'user_id': self.id,
+            'extended': 1,
+            'offset': offset,
+            'count': 1000,
+        }
+
+        if album_id == -9000:
+            # для получения фотографий из альбома "Фото со мной"
+            method = 'photos.getUserPhotos'
+        else:
+            # для получения фотографий из всех остальных альбомов
+            method = 'photos.get'
+            params = {**params, 'album_id': album_id}
+
+        response = self._execute_requests(method, params)
+        sleep(1)
+        total_album_photos = response['response']['count']
+
+        if not result:
+            result = {}
+
+        for item in response['response']['items']:
+            result[item['id']] = {
+                'album_title': album_title,
+                'date': datetime.fromtimestamp(item['date']),
+                'likes': item['likes']['count'],
+                # самый большой размер последний в списке sizes
+                'size': item['sizes'][-1]['type'],
+                'url': item['sizes'][-1]['url'],
+            }
+
+        offset += 1000
+
+        if offset < total_album_photos:
+            self._get_photos(album_id, album_title, offset=offset, result=result)
+        return result
+
     def _ydisk_backup(self, photos):
         """ сохраняет фотографии на яндекс диск """
         root_dir = self._get_full_name()
@@ -155,53 +202,6 @@ class VkUser:
                                 'size': size})
 
         return saved_files
-
-    def _get_photos(self, album_id, album_title, offset=0, result=None):
-        """
-        получает все фотографии из альбома album_id в максимальном разрешении,
-        возвращает словарь photos[photo_id] = { album_title, название альбома
-                                                date: дата загрузки с точностью до милисекунд,
-                                                likes: количество лайков,
-                                                size: размер фото в специальном формате vk_api,
-                                                url: ссылка на фото }
-        """
-        params = {
-            'user_id': self.id,
-            'extended': 1,
-            'offset': offset,
-            'count': 1000,
-        }
-
-        if album_id == -9000:
-            # для получения фотографий из альбома "Фото со мной"
-            method = 'photos.getUserPhotos'
-        else:
-            # для получения фотографий из всех остальных альбомов
-            method = 'photos.get'
-            params = {**params, 'album_id': album_id}
-
-        response = self._execute_requests(method, params)
-        sleep(1)
-        total_album_photos = response['response']['count']
-
-        if not result:
-            result = {}
-
-        for item in response['response']['items']:
-            result[item['id']] = {
-                'album_title': album_title,
-                'date': datetime.fromtimestamp(item['date']),
-                'likes': item['likes']['count'],
-                # самый большой размер последний в списке sizes
-                'size': item['sizes'][-1]['type'],
-                'url': item['sizes'][-1]['url'],
-            }
-
-        offset += 1000
-
-        if offset < total_album_photos:
-            self._get_photos(album_id, album_title, offset=offset, result=result)
-        return result
 
     def _get_albums(self):
         """

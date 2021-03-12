@@ -1,4 +1,4 @@
-from pprint import pprint
+import modules.colors as COLORS
 
 def select_albums_to_backup(albums):
     """
@@ -47,5 +47,11 @@ def select_albums_to_backup(albums):
             counter += 1
             items = []
 
-    select = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
+    while True:
+        select = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
+        if select not in range(1, counter-1):
+            print(f"\n{COLORS.FAILURE} {select} not in range [1-{counter - 1}], let's try again.")
+        else:
+            break
+
     return data_for_backup[select]
