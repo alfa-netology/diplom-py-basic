@@ -1,37 +1,37 @@
 [
     {
         "target": "Yandex Disk",
-        "path": "Михаил Афанасьевич/profile photos/",
-        "name": "0012-2019-07-12-181647000000.jpg",
-        "required name": "12.jpg",
+        "path": "Александр Углин/profile photos/",
+        "name": "0007-2011-07-26-102906000000.jpg",
+        "required name": "07.jpg",
+        "size": "y"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/profile photos/",
+        "name": "0001-2011-03-04-145146000000.jpg",
+        "required name": "01.jpg",
         "size": "x"
     },
     {
         "target": "Yandex Disk",
-        "path": "Михаил Афанасьевич/profile photos/",
-        "name": "0003-2020-07-05-230110000000.jpg",
+        "path": "Александр Углин/profile photos/",
+        "name": "0010-2011-09-15-235519000000.jpg",
+        "required name": "10.jpg",
+        "size": "w"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/profile photos/",
+        "name": "0005-2012-06-11-192121000000.jpg",
+        "required name": "05.jpg",
+        "size": "z"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/profile photos/",
+        "name": "0003-2013-07-04-093541000000.jpg",
         "required name": "03.jpg",
         "size": "y"
-    },
-    {
-        "target": "Yandex Disk",
-        "path": "Михаил Афанасьевич/profile photos/",
-        "name": "0002-2020-07-06-145329000000.jpg",
-        "required name": "02.jpg",
-        "size": "y"
-    },
-    {
-        "target": "Yandex Disk",
-        "path": "Михаил Афанасьевич/profile photos/",
-        "name": "0001-2020-07-06-145349000000.jpg",
-        "required name": "01.jpg",
-        "size": "y"
-    },
-    {
-        "target": "Yandex Disk",
-        "path": "Михаил Афанасьевич/profile photos/",
-        "name": "0002-2020-07-06-145456000000.jpg",
-        "required name": "02-2020-07-06-145456000000.jpg",
-        "size": "z"
     }
 ]

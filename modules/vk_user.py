@@ -194,11 +194,11 @@ class VkUser:
                 'url': item['sizes'][-1]['url'],
             }
 
-            offset += 1000
+        offset += 1000
 
-            if offset < total_album_photos:
-                self._get_photos(album_id, album_title, offset=offset, result=result)
-            return result
+        if offset < total_album_photos:
+            self._get_photos(album_id, album_title, offset=offset, result=result)
+        return result
 
     def _get_albums(self):
         """
