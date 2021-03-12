@@ -61,20 +61,7 @@ class VkUser:
         photos = {}
         album_size = albums_to_backup[0]['album_size']
 
-        # маловероятный случай, но подстрахуемся
-        try:
-            int(quantity)
-        except ValueError:
-            message = f"'{quantity}' invalid attribute for backup() function"
-            print(f"{COLORS.FAILURE} {message}")
-            logger.error(message)
-            exit()
-
-        if quantity > album_size:
-            message = f"user have only {album_size} photos, required {quantity}"
-            print(f"{COLORS.FAILURE} {message}")
-            logger.error(message)
-            exit()
+        self._check_quantity(quantity, album_size)
 
         # выбирает все фотографии из заданных альбомов
         for item in tqdm(albums_to_backup, colour='#188FA7', ncols=100, desc=f"receive data for backup"):
@@ -94,6 +81,23 @@ class VkUser:
 
         with open(saved_files_path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(saved_files, indent=4, ensure_ascii=False, ))
+
+    @staticmethod
+    def _check_quantity(quantity, album_size):
+        # маловероятный случай, но подстрахуемся
+        try:
+            int(quantity)
+        except ValueError:
+            message = f"'{quantity}' invalid attribute for backup() function"
+            print(f"{COLORS.FAILURE} {message}")
+            logger.error(message)
+            exit()
+
+        if quantity > album_size:
+            message = f"user have only {album_size} photos in backup albums, required {quantity}"
+            print(f"{COLORS.FAILURE} {message}")
+            logger.error(message)
+            exit()
 
     def _ydisk_backup(self, photos):
         """ сохраняет фотографии на яндекс диск """
