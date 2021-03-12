@@ -1,0 +1,37 @@
+[
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/test_with_files/",
+        "name": "0000-2021-03-05-160447000000.jpg",
+        "required name": "00.jpg",
+        "size": "z"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/holidays/",
+        "name": "0000-2013-06-02-103901000000.jpg",
+        "required name": "00-2013-06-02-103901000000.jpg",
+        "size": "y"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/holidays/",
+        "name": "0000-2013-06-02-103905000000.jpg",
+        "required name": "00-2013-06-02-103905000000.jpg",
+        "size": "z"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/holidays/",
+        "name": "0001-2013-06-02-103957000000.jpg",
+        "required name": "01.jpg",
+        "size": "z"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Александр Углин/holidays/",
+        "name": "0000-2013-06-02-104058000000.jpg",
+        "required name": "00-2013-06-02-104058000000.jpg",
+        "size": "y"
+    }
+]

@@ -6,6 +6,7 @@ import json
 import os
 import itertools
 
+from modules.yandex_api import YaUploader
 import modules.colors as COLORS
 from modules.logger import set_logger
 
@@ -47,6 +48,14 @@ class VkUser:
             logger.info(f"Create instance VkUser for '{user_id}' id #{result}")
             return result
 
+    def _get_full_name(self):
+        params = {'user_ids': self.id}
+        response = self._execute_requests('users.get', params)
+        first_name = response['response'][0]['first_name']
+        last_name = response['response'][0]['last_name']
+        full_name = f"{first_name} {last_name}"
+        return full_name
+
     def backup(self, albums_to_backup, quantity=5):
         photos = {}
         album_size = albums_to_backup[0]['album_size']
@@ -75,6 +84,72 @@ class VkUser:
             photos = dict(itertools.islice(photos.items(), quantity))
 
         logger.info('Select photo to backup')
+
+        saved_files = []
+        saved_files += self._ydisk_backup(photos)
+
+        saved_files_path = os.path.join(os.getcwd(), 'output', 'saved_files.json')
+
+        with open(saved_files_path, 'w', encoding='utf-8') as file:
+            file.write(json.dumps(saved_files, indent=4, ensure_ascii=False, ))
+
+    def _ydisk_backup(self, photos):
+        """ сохраняет фотографии на яндекс диск """
+        root_dir = self._get_full_name()
+
+        uploader = YaUploader()
+        uploader.make_dir(root_dir)
+
+        # список уже созданных папок
+        dirs_has_already = []
+        # список использованных имен файлов
+        file_names_has_already = []
+        saved_files = []
+
+        print()
+        for values in tqdm(photos.values(), colour='#188FA7', ncols=100, desc=f'backup to Yandex Disk'):
+            album_title = values['album_title']
+            date = values['date']
+            likes = values['likes']
+            size = values['size']
+            image_url = values['url']
+
+            if album_title not in dirs_has_already:
+                uploader.make_dir(f"{root_dir}/{album_title}")
+                dirs_has_already.append(album_title)
+
+            file_path = f"{root_dir}/{album_title}/"
+
+            """
+            имя файла как требуется по заданию:
+            количество лайков дополнено ведущими 0 до 2 символов, 
+            при необходимости + дата с точностью до милисекунд.
+            при сохранении большого количества файлов, данный формат имени файла не очень удобен,
+            поэтому требуемое имя сохраняется в итоговом 'saved_files.json' как 'required name',
+            а файл сохраняется с именем, которое формируется ниже как 'file_name'
+            """
+            required_file_name = f"{likes:02}.jpg"
+            if required_file_name in file_names_has_already:
+                required_file_name = f"{likes:02}-{date}.jpg"
+            file_names_has_already.append(required_file_name)
+
+            """
+            имя сохраняемого файла:
+            кол-во лайков дополненное ведущими 0 до 4 символов + дата загрузки с точностью до милисекунд
+            """
+            file_name = f"{likes:04}-{date}.jpg"
+
+            uploader.upload(f"{file_path}{file_name}", image_url)
+            sleep(1)
+
+            saved_files.append({''
+                                'target': 'Yandex Disk',
+                                'path': file_path,
+                                'name': file_name,
+                                'required name': required_file_name,
+                                'size': size})
+
+        return saved_files
 
     def _get_photos(self, album_id, album_title, count=1000, offset=0, result=None):
         """

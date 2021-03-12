@@ -2,7 +2,6 @@ from modules.vk_user import VkUser
 from modules.logger import set_logger
 import modules.colors as COLORS
 
-from pprint import pprint
 from modules.utils import select_albums_to_backup
 
 logger = set_logger(__name__)
