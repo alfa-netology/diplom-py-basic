@@ -153,7 +153,7 @@ class VkUser:
 
         return saved_files
 
-    def _get_photos(self, album_id, album_title, count=1000, offset=0, result=None):
+    def _get_photos(self, album_id, album_title, offset=0, result=None):
         """
         получает все фотографии из альбома album_id в максимальном разрешении,
         возвращает словарь photos[photo_id] = { album_title, название альбома
@@ -166,7 +166,7 @@ class VkUser:
             'user_id': self.id,
             'extended': 1,
             'offset': offset,
-            'count': count,
+            'count': 1000,
         }
 
         if album_id == -9000:
@@ -194,13 +194,10 @@ class VkUser:
                 'url': item['sizes'][-1]['url'],
             }
 
-        if count < 1000:
-            return result
-        else:
             offset += 1000
 
             if offset < total_album_photos:
-                self._get_photos(album_id, album_title, count=count, offset=offset, result=result)
+                self._get_photos(album_id, album_title, offset=offset, result=result)
             return result
 
     def _get_albums(self):

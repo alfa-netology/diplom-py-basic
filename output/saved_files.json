@@ -1,37 +1,37 @@
 [
     {
         "target": "Yandex Disk",
-        "path": "Александр Углин/test_with_files/",
-        "name": "0000-2021-03-05-160447000000.jpg",
-        "required name": "00.jpg",
-        "size": "z"
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0012-2019-07-12-181647000000.jpg",
+        "required name": "12.jpg",
+        "size": "x"
     },
     {
         "target": "Yandex Disk",
-        "path": "Александр Углин/holidays/",
-        "name": "0000-2013-06-02-103901000000.jpg",
-        "required name": "00-2013-06-02-103901000000.jpg",
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0003-2020-07-05-230110000000.jpg",
+        "required name": "03.jpg",
         "size": "y"
     },
     {
         "target": "Yandex Disk",
-        "path": "Александр Углин/holidays/",
-        "name": "0000-2013-06-02-103905000000.jpg",
-        "required name": "00-2013-06-02-103905000000.jpg",
-        "size": "z"
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0002-2020-07-06-145329000000.jpg",
+        "required name": "02.jpg",
+        "size": "y"
     },
     {
         "target": "Yandex Disk",
-        "path": "Александр Углин/holidays/",
-        "name": "0001-2013-06-02-103957000000.jpg",
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0001-2020-07-06-145349000000.jpg",
         "required name": "01.jpg",
-        "size": "z"
+        "size": "y"
     },
     {
         "target": "Yandex Disk",
-        "path": "Александр Углин/holidays/",
-        "name": "0000-2013-06-02-104058000000.jpg",
-        "required name": "00-2013-06-02-104058000000.jpg",
-        "size": "y"
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0002-2020-07-06-145456000000.jpg",
+        "required name": "02-2020-07-06-145456000000.jpg",
+        "size": "z"
     }
 ]
