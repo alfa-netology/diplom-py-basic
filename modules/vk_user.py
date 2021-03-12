@@ -135,7 +135,7 @@ class VkUser:
             """
             required_file_name = f"{likes:02}.jpg"
             if required_file_name in file_names_has_already:
-                required_file_name = f"{likes:02}-{date.strftime('Y-%m-%d')}.jpg"
+                required_file_name = f"{likes:02}-{date.strftime('%Y-%m-%d')}.jpg"
             file_names_has_already.append(required_file_name)
 
             """
