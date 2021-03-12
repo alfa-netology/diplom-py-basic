@@ -60,7 +60,6 @@ class VkUser:
     def backup(self, albums_to_backup, quantity=5):
         photos = {}
         album_size = albums_to_backup[0]['album_size']
-
         self._check_quantity(quantity, album_size)
 
         # выбирает все фотографии из заданных альбомов
@@ -129,21 +128,21 @@ class VkUser:
             """
             имя файла как требуется по заданию:
             количество лайков дополнено ведущими 0 до 2 символов, 
-            при необходимости + дата с точностью до милисекунд.
+            при необходимости + дата.
             при сохранении большого количества файлов, данный формат имени файла не очень удобен,
             поэтому требуемое имя сохраняется в итоговом 'saved_files.json' как 'required name',
             а файл сохраняется с именем, которое формируется ниже как 'file_name'
             """
             required_file_name = f"{likes:02}.jpg"
             if required_file_name in file_names_has_already:
-                required_file_name = f"{likes:02}-{date}.jpg"
+                required_file_name = f"{likes:02}-{date.strftime('Y-%m-%d')}.jpg"
             file_names_has_already.append(required_file_name)
 
             """
             имя сохраняемого файла:
             кол-во лайков дополненное ведущими 0 до 4 символов + дата загрузки с точностью до милисекунд
             """
-            file_name = f"{likes:04}-{date}.jpg"
+            file_name = f"{likes:04}-{date.strftime('%Y-%m-%d_%H-%M-%S-%f')}.jpg"
 
             uploader.upload(f"{file_path}{file_name}", image_url)
             sleep(1)
@@ -191,7 +190,7 @@ class VkUser:
         for item in response['response']['items']:
             result[item['id']] = {
                 'album_title': album_title,
-                'date': datetime.fromtimestamp(item['date']).strftime("%Y-%m-%d-%H%M%S%f"),
+                'date': datetime.fromtimestamp(item['date']),
                 'likes': item['likes']['count'],
                 # самый большой размер последний в списке sizes
                 'size': item['sizes'][-1]['type'],
