@@ -29,7 +29,6 @@ if vk_client.id_status is True:
     albums = vk_client.albums
     albums_to_backup = select_albums_to_backup(albums)
     vk_client.backup(albums_to_backup)
-
 else:
     print(f"{COLORS.FAILURE} {vk_client.id.lower()}")
 

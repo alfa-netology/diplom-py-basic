@@ -47,7 +47,5 @@ def select_albums_to_backup(albums):
             counter += 1
             items = []
 
-    # pprint(data_for_backup)
-
     select = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
     return data_for_backup[select]

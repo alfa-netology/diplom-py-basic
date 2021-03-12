@@ -25,7 +25,8 @@ class VkUser:
     def _check_id(self, user_id):
         """
         проверяет введеный id на валидность
-        в случае успешного прохождения проверок, возвращает id пользователя
+        в случае успешного прохождения проверок, возвращает id пользователя,
+        в противном случае id = 'Invalid user id' или 'Private id'
         """
         add_params = {'user_ids': user_id}
         response = self._execute_requests('users.get', add_params)
@@ -38,7 +39,7 @@ class VkUser:
 
         if response['response'][0]['is_closed'] is True and response['response'][0]['can_access_closed'] is False:
             # проверка id (открытый/закрытый)
-            result = 'Private account'
+            result = 'Private id'
             logger.error(f"{result} '{user_id}'")
             return result
         else:
@@ -75,6 +76,7 @@ class VkUser:
             logger.error(message)
             exit()
 
+        # выбирает все фотографии из заданных альбомов
         for item in tqdm(albums_to_backup, colour='#188FA7', ncols=100, desc=f"receive data for backup"):
             photos.update(self._get_photos(item['album_id'], item['album_title']))
 
@@ -100,9 +102,9 @@ class VkUser:
         uploader = YaUploader()
         uploader.make_dir(root_dir)
 
-        # список уже созданных папок
+        # уже созданные папки
         dirs_has_already = []
-        # список использованных имен файлов
+        # имена сохранненых файлов
         file_names_has_already = []
         saved_files = []
 
@@ -205,7 +207,7 @@ class VkUser:
         """
         получает список всех непустых альбомов пользователя.
         альбомы Фотографии со страницы, Фотографии на стене, Сохраненные фотографии и Фотографии со мной,
-        переименовываются, в соотвествии со словарем 'replace_title'.
+        переименовываются _replace_album_title(), в соотвествии со словарем 'replace_title'.
         эти имена будут использованы при сохранении каждого альбома в свою папку.
         вовзращает словарь albums, который в дальнейшем будет использован для выбора альбомов для сохранения
         all photos - все доступные фотографии,
