@@ -76,7 +76,7 @@ class VkUser:
         saved_files = []
         saved_files += self._ydisk_backup(photos)
 
-        saved_files_path = os.path.join(os.getcwd(), 'output', 'saved_files.json')
+        saved_files_path = os.path.join(os.getcwd(), 'output', 'backup_result.json')
 
         with open(saved_files_path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(saved_files, indent=4, ensure_ascii=False, ))
@@ -182,14 +182,14 @@ class VkUser:
             """
             required_file_name = f"{likes:02}.jpg"
             if required_file_name in file_names_has_already:
-                required_file_name = f"{likes:02}-{date.strftime('%Y-%m-%d')}.jpg"
+                required_file_name = f"{likes:02}_{date.strftime('%Y-%m-%d')}.jpg"
             file_names_has_already.append(required_file_name)
 
             """
             имя сохраняемого файла:
             кол-во лайков дополненное ведущими 0 до 4 символов + дата загрузки с точностью до милисекунд
             """
-            file_name = f"{likes:04}-{date.strftime('%Y-%m-%d_%H-%M-%S-%f')}.jpg"
+            file_name = f"{likes:04}_{date.strftime('%Y-%m-%d_%H-%M-%S-%f')}.jpg"
 
             uploader.upload(f"{file_path}{file_name}", image_url)
             sleep(1)
