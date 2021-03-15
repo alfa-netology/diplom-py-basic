@@ -73,13 +73,7 @@ class VkUser:
 
         logger.info('Select photo to backup')
 
-        saved_files = []
-        saved_files += self._ydisk_backup(photos)
-
-        saved_files_path = os.path.join(os.getcwd(), 'output', 'backup_result.json')
-
-        with open(saved_files_path, 'w', encoding='utf-8') as file:
-            file.write(json.dumps(saved_files, indent=4, ensure_ascii=False, ))
+        self._upload_data(YaUploader(), photos)
 
     @staticmethod
     def _check_quantity(quantity, album_size):
@@ -145,21 +139,18 @@ class VkUser:
             self._get_photos(album_id, album_title, offset=offset, result=result)
         return result
 
-    def _ydisk_backup(self, photos):
-        """ сохраняет фотографии на яндекс диск """
+    def _upload_data(self, uploader, photos):
         root_dir = self._get_full_name()
-
-        uploader = YaUploader()
-        uploader.make_dir(root_dir)
-
         # уже созданные папки
         dirs_has_already = []
-        # имена сохранненых файлов
+        # уже использованые имена файлов для сохранения
         file_names_has_already = []
         saved_files = []
+        saved_files_path = os.path.join(os.getcwd(), 'output', 'backup_result.json')
+        
+        uploader.make_dir(root_dir)
 
-        print()
-        for values in tqdm(photos.values(), colour='#188FA7', ncols=100, desc=f'backup to Yandex Disk'):
+        for values in tqdm(photos.values(), colour='#188FA7', ncols=100, desc=f'backup data to {uploader.title}'):
             album_title = values['album_title']
             date = values['date']
             likes = values['likes']
@@ -191,16 +182,19 @@ class VkUser:
             file_name = f"{likes:04}_{date.strftime('%Y-%m-%d_%H-%M-%S-%f')}.jpg"
 
             uploader.upload(f"{file_path}{file_name}", image_url)
+
             sleep(1)
 
-            saved_files.append({''
-                                'target': 'Yandex Disk',
-                                'path': file_path,
-                                'name': file_name,
-                                'required name': required_file_name,
-                                'size': size})
+            saved_files.append({
+                'target': uploader.title,
+                'path': file_path,
+                'name': file_name,
+                'required name': required_file_name,
+                'size': size
+            })
 
-        return saved_files
+        with open(saved_files_path, 'w', encoding='utf-8') as file:
+            file.write(json.dumps(saved_files, indent=4, ensure_ascii=False))
 
     def _get_albums(self):
         """
@@ -274,6 +268,9 @@ class VkUser:
             -9000: 'tagged photos'
         }
 
+        # id сервисных альбомов
+        # -6: фотографии профиля, -7: фотографии со стены
+        # -15: сохраненные фотографии, -9000: фото на которых отмечен пользователь
         service_albums_ids = [-6, -7, -15, -9000]
 
         if album_id in service_albums_ids:

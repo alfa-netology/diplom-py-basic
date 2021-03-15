@@ -1,0 +1,37 @@
+[
+    {
+        "target": "Yandex Disk",
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0012_2019-07-12_18-16-47-000000.jpg",
+        "required name": "12.jpg",
+        "size": "x"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0003_2020-07-05_23-01-10-000000.jpg",
+        "required name": "03.jpg",
+        "size": "y"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0002_2020-07-06_14-53-29-000000.jpg",
+        "required name": "02.jpg",
+        "size": "y"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0001_2020-07-06_14-53-49-000000.jpg",
+        "required name": "01.jpg",
+        "size": "y"
+    },
+    {
+        "target": "Yandex Disk",
+        "path": "Михаил Афанасьевич/profile photos/",
+        "name": "0002_2020-07-06_14-54-56-000000.jpg",
+        "required name": "02_2020-07-06.jpg",
+        "size": "z"
+    }
+]

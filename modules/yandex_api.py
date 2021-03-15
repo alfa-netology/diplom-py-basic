@@ -9,6 +9,7 @@ with open('.tokens/yandex') as file_object:
 class YaUploader:
     def __init__(self):
         self.token = token
+        self.title = 'Yandex Disk'
 
     @property
     def _auth_header(self):
