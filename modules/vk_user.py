@@ -10,6 +10,11 @@ from modules.yandex_api import YaUploader
 import modules.colors as colors
 from modules.logger import set_logger
 
+# id сервисных альбомов
+# -6: фотографии профиля, -7: фотографии со стены
+# -15: сохраненные фотографии, -9000: фото на которых отмечен пользователь
+SERVICE_ALBUMS_IDS = [-6, -7, -15, -9000]
+
 logger = set_logger(__name__)
 
 class VkUser:
@@ -109,7 +114,8 @@ class VkUser:
         }
 
         if album_id == -9000:
-            # для получения фотографий из альбома "Фото со мной"
+            # -9000 id сервисного альбома 'Фото со мной'
+            # для получения фото из него у vk-api отдельный метод
             method = 'photos.getUserPhotos'
         else:
             # для получения фотографий из всех остальных альбомов
@@ -230,33 +236,46 @@ class VkUser:
                         'title': album_title,
                     }
 
-                if album_id in [-6, -7, -15, -9000]:
+                if album_id in SERVICE_ALBUMS_IDS:
                     service_total_size += album_size
                     service_items.append(album)
                 else:
                     owner_total_size += album_size
                     owner_items.append(album)
 
-            albums.update({
-                'all photos': {
-                    'items': service_items + owner_items,
-                    'total_size': service_total_size + owner_total_size
-                }})
-
-            if len(owner_items) > 0:
-                albums.update({
-                    'user albums': {
-                        'items': owner_items,
-                        'total_size': owner_total_size,
-                    }})
-
-            if len(service_items) > 0:
-                albums.update({
-                    'service': {
-                        'items': service_items,
-                        'total_size': service_total_size
-                        }})
+        params = [service_items, owner_items, service_total_size, owner_total_size]
+        albums.update(self._generate_result(*params))
         return albums
+
+    # название для метода так себе, но другое не придумалось пока
+    @staticmethod
+    def _generate_result(service_items, owner_items, service_total_size, owner_total_size):
+        service_albums = {}
+        user_albums = {}
+
+        all_albums = {'all photos': {
+            'items': service_items + owner_items,
+            'total_size': service_total_size + owner_total_size
+        }}
+
+        if len(owner_items) > 0:
+            user_albums = {
+                'user albums': {
+                    'items': owner_items,
+                    'total_size': owner_total_size,
+                }
+            }
+
+        if len(service_items) > 0:
+            service_albums = {
+                'service': {
+                    'items': service_items,
+                    'total_size': service_total_size
+                }
+            }
+
+        all_albums = {**all_albums, **user_albums, **service_albums}
+        return all_albums
 
     @staticmethod
     def _replace_album_title(album_id, album_title):
@@ -268,12 +287,7 @@ class VkUser:
             -9000: 'tagged photos'
         }
 
-        # id сервисных альбомов
-        # -6: фотографии профиля, -7: фотографии со стены
-        # -15: сохраненные фотографии, -9000: фото на которых отмечен пользователь
-        service_albums_ids = [-6, -7, -15, -9000]
-
-        if album_id in service_albums_ids:
+        if album_id in SERVICE_ALBUMS_IDS:
             return replace_title[album_id]
         else:
             return album_title
