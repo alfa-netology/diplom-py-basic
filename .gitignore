@@ -3,3 +3,5 @@
 .temp
 logs
 __pycache__
+Pipfile
+Pipfile.lock

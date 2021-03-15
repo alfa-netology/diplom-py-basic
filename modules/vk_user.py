@@ -7,7 +7,7 @@ import os
 import itertools
 
 from modules.yandex_api import YaUploader
-import modules.colors as COLORS
+import modules.colors as colors
 from modules.logger import set_logger
 
 logger = set_logger(__name__)
@@ -88,13 +88,13 @@ class VkUser:
             int(quantity)
         except ValueError:
             message = f"'{quantity}' invalid attribute for backup() function"
-            print(f"{COLORS.FAILURE} {message}")
+            print(f"{colors.FAILURE} {message}")
             logger.error(message)
             exit()
 
         if quantity > album_size:
             message = f"user have only {album_size} photos in backup albums, required {quantity}"
-            print(f"{COLORS.FAILURE} {message}")
+            print(f"{colors.FAILURE} {message}")
             logger.error(message)
             exit()
 
@@ -174,8 +174,7 @@ class VkUser:
 
             """
             имя файла как требуется по заданию:
-            количество лайков дополнено ведущими 0 до 2 символов, 
-            при необходимости + дата.
+            количество лайков дополнено ведущими 0 до 2 символов, при необходимости + дата.
             при сохранении большого количества файлов, данный формат имени файла не очень удобен,
             поэтому требуемое имя сохраняется в итоговом 'backup_result.json' как 'required name',
             а файл сохраняется с именем, которое формируется ниже как 'file_name'
@@ -275,7 +274,9 @@ class VkUser:
             -9000: 'tagged photos'
         }
 
-        if album_id in [-6, -7, -15, -9000]:
+        service_albums_ids = [-6, -7, -15, -9000]
+
+        if album_id in service_albums_ids:
             return replace_title[album_id]
         else:
             return album_title

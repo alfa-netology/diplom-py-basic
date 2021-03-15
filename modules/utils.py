@@ -1,4 +1,4 @@
-import modules.colors as COLORS
+import modules.colors as colors
 
 def select_albums_to_backup(albums):
     """
@@ -50,7 +50,7 @@ def select_albums_to_backup(albums):
     while True:
         select = (int(input(f"\nselect albums to backup [1-{counter - 1}]: ")))
         if select not in range(1, counter-1):
-            print(f"\n{COLORS.FAILURE} {select} not in range [1-{counter - 1}], let's try again.")
+            print(f"\n{colors.FAILURE} {select} not in range [1-{counter - 1}], let's try again.")
         else:
             break
 
