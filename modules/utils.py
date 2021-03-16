@@ -1,4 +1,10 @@
+import os
 import modules.colors as colors
+
+def check_dir_exists(path):
+    if os.path.exists(path) is False:
+        os.mkdir(path)
+
 
 def select_albums_to_backup(albums):
     """

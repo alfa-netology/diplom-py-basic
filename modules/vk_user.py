@@ -9,6 +9,7 @@ import itertools
 from modules.yandex_api import YaUploader
 import modules.colors as colors
 from modules.logger import set_logger
+from modules.utils import check_dir_exists
 
 # id сервисных альбомов
 PROFILE_PHOTO = -6
@@ -153,6 +154,8 @@ class VkUser:
         # уже использованые имена файлов для сохранения
         file_names_has_already = []
         saved_files = []
+
+        check_dir_exists('output/')
         saved_files_path = os.path.join(os.getcwd(), 'output', 'backup_result.json')
         
         uploader.make_dir(root_dir)
