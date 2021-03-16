@@ -1,7 +1,8 @@
 .tokens
 .idea
 .temp
-logs
 __pycache__
 Pipfile
 Pipfile.lock
+logs/*.log
+output/backup_result.json

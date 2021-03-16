@@ -38,15 +38,17 @@ class YaUploader:
 
             try:
                 response = requests.put(url, image.content)
+
+                if response.status_code == 201:
+                    logger.info(f"'{file_name}' successfully upload to YaDisk.")
+                else:
+                    status_code = response.status_code
+                    error_message = response.json()['message']
+                    logger.error(f" <{status_code}> {error_message} filename: {file_name}")
+
             except Exception as e:
                 logger.error(e)
 
-            if response.status_code == 201:
-                logger.info(f"'{file_name}' successfully upload to YaDisk.")
-            else:
-                status_code = response.status_code
-                error_message = response.json()['message']
-                logger.error(f" <{status_code}> {error_message} filename: {file_name}")
         else:
             logger.error(f"{result}")
 

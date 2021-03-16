@@ -11,9 +11,11 @@ import modules.colors as colors
 from modules.logger import set_logger
 
 # id сервисных альбомов
-# -6: фотографии профиля, -7: фотографии со стены
-# -15: сохраненные фотографии, -9000: фото на которых отмечен пользователь
-SERVICE_ALBUMS_IDS = [-6, -7, -15, -9000]
+PROFILE_PHOTO = -6
+WALL_PHOTO = -7
+SAVE_PHOTO = -15
+CHECK_USER_PHOTO = -9000
+SERVICE_ALBUMS_IDS = [PROFILE_PHOTO, WALL_PHOTO, SAVE_PHOTO, CHECK_USER_PHOTO]
 
 logger = set_logger(__name__)
 
@@ -113,9 +115,8 @@ class VkUser:
             'count': 1000,
         }
 
-        if album_id == -9000:
-            # -9000 id сервисного альбома 'Фото со мной'
-            # для получения фото из него у vk-api отдельный метод
+        if album_id == CHECK_USER_PHOTO:
+            # альбом 'Фото со мной' для получения фото из него у vk-api отдельный метод
             method = 'photos.getUserPhotos'
         else:
             # для получения фотографий из всех остальных альбомов
@@ -280,17 +281,14 @@ class VkUser:
     @staticmethod
     def _replace_album_title(album_id, album_title):
         # переименовывает сервисные альбомы
-        replace_title = {
-            -6: 'profile photos',
-            -7: 'photos from wall',
-            -15: 'saved photos',
-            -9000: 'tagged photos'
+        NAME_MAPPER = {
+            PROFILE_PHOTO: 'profile photos',
+            WALL_PHOTO: 'photos from wall',
+            SAVE_PHOTO: 'saved photos',
+            CHECK_USER_PHOTO: 'tagged photos'
         }
 
-        if album_id in SERVICE_ALBUMS_IDS:
-            return replace_title[album_id]
-        else:
-            return album_title
+        return NAME_MAPPER.get(album_id, album_title)
 
     def _execute_requests(self, api_method, add_params, request_method='get'):
         """ выполнение запроса к vk-api с заданными параметрами """
